@@ -1,0 +1,24 @@
+@font-face {
+  font-family: 'vt220';
+  src: url('/Glass_TTY_VT220.ttf') format('truetype');
+}
+
+.vt220 {
+  font-family: 'vt220';
+}
+
+.distort {
+  filter: url(#distort);
+}
+
+.correct {
+  filter: url(#correct);
+}
+
+.bloom {
+  filter: url(#bloom);
+}
+
+.glass {
+  background: radial-gradient(circle, transparent 0%, black 135%);
+}
