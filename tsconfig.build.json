@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/components"
+    },
+    {
+      "path": "apps/ui"
+    },
+    {
+      "path": "apps/api"
+    }
+  ]
+}

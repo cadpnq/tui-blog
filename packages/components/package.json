@@ -1,0 +1,13 @@
+{
+  "name": "@blog/components",
+  "version": "1.0.0",
+  "description": "",
+  "main": "/dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "private": true,
+  "dependencies": {
+    "typescript": "^5.4.5"
+  }
+}

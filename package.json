@@ -1,0 +1,29 @@
+{
+  "name": "tui-blog",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "turbo test",
+    "build": "turbo build",
+    "start": "turbo dev",
+    "lint": "turbo lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cadpnq/tui-blog.git"
+  },
+  "author": "Nicky Nickell <nicky.nickell@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/cadpnq/tui-blog/issues"
+  },
+  "homepage": "https://github.com/cadpnq/tui-blog#readme",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "turbo": "^1.13.2"
+  }
+}
