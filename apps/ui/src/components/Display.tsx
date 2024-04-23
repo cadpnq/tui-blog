@@ -2,7 +2,7 @@ import { Terminal } from "@xterm/xterm";
 import { WebglAddon } from "@xterm/addon-webgl";
 import { useEffect, useMemo, useRef } from "preact/hooks";
 import "../../../../node_modules/@xterm/xterm/css/xterm.css";
-import "./Display.css";
+import "./Display.styl";
 import { generateFisheyeEffectDataUrl } from "../util";
 import { rgb } from "d3-color";
 import { interpolateRgb } from "d3-interpolate";
