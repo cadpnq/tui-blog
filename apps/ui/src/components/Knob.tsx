@@ -66,17 +66,20 @@ export const Knob = ({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
+      style={{
+        boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.5)",
+      }}
     >
       <defs>
         <linearGradient id="hgradient">
-          <stop offset="0%" stop-color="black" />
+          <stop offset="0%" stop-color="#46381d" />
           <stop offset="50%" stop-color="rgb(225, 210, 180)" />
-          <stop offset="100%" stop-color="black" />
+          <stop offset="100%" stop-color="#46381d" />
         </linearGradient>
         <linearGradient id="vgradient" gradientTransform="rotate(90)">
           <stop offset="0%" stop-color="black" />
-          <stop offset="5%" stop-color="white" />
-          <stop offset="95%" stop-color="white" />
+          <stop offset="10%" stop-color="rgb(225, 210, 180)" />
+          <stop offset="90%" stop-color="rgb(225, 210, 180)" />
           <stop offset="100%" stop-color="black" />
         </linearGradient>
       </defs>

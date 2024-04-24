@@ -2,67 +2,17 @@ import { useState } from "preact/hooks";
 import { Display } from "./Display";
 import { Knob } from "./Knob";
 import { Sun, MoveVertical, MoveHorizontal, Focus, Power } from "lucide-preact";
+import "./Terminal.styl";
 
-export function Terminal({socket}: {socket?: WebSocket}) {
+export function Terminal({ socket }: { socket?: WebSocket }) {
   const [intensity, setIntensity] = useState(0.1);
   const [distortion, setDistortion] = useState(0.1);
   const [scaleX, setScaleX] = useState(1);
   const [scaleY, setScaleY] = useState(1);
 
-  const dark = "rgb(25,25,20)";
-  const light = "rgb(55,55,50)";
-  const front = "rgb(70,70,65)";
-  const bright = "rgb(85,85,80)";
-
-  // background: conic-gradient(red,blue, red,blue, red,blue, red,blue, red);
-  //            rgba(107.5, 95, 80, 1) 45%,
-
   return (
-    <div
-      className="pb-4 px-10 rounded-lg"
-      style={{
-        //backgroundColor: "rgb(225, 210, 180)",
-        background: `
-          linear-gradient(
-            rgba(107.5, 95, 80, .6) 0%,
-            transparent 80%,
-            rgba(107.5, 95, 80, .6) 90%
-          ),
-          linear-gradient(
-            transparent 90%, 
-            black 90%,
-            rgba(225, 210, 180, 1) 100%
-          ),
-          linear-gradient(
-            90deg,
-            rgba(107.5, 95, 80, 1) 0%,
-            rgba(225, 210, 180, 0) 2%,
-            rgba(225, 210, 180, 0) 98%,
-            rgba(107.5, 95, 80, 1) 100%
-          ),
-          linear-gradient(
-            rgba(107.5, 95, 80, 1) 0%,
-            rgba(225, 210, 180, 1) 2%
-          )
-          `,
-      }}
-    >
-      <div
-        className="flex flex-col p-4 mt-[-20px] mb-4 rounded-lg border-opacity-100 border-[20px]"
-        style={{
-          borderColor: front,
-          background: `conic-gradient(
-            ${dark} 0deg 57.5deg, 
-            ${light} 57.5deg, 
-            ${dark} 123deg, 
-            ${bright} 123deg 237deg, 
-            ${dark} 237deg,
-            ${light} 302.5deg,
-            ${dark} 302.5deg 360deg
-          )`,
-          boxShadow: `0px 4px 4px 0px black`,
-        }}
-      >
+    <div className="case pb-4 px-10 rounded-lg">
+      <div className="bezel flex flex-col p-4 mt-[-20px] mb-4 rounded-lg border-opacity-100 border-[20px]">
         <Display
           rows={24}
           cols={80}

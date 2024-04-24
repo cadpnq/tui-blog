@@ -120,11 +120,12 @@ export const Display = ({
     <>
       <div className="">
         <div
-          className="m-2 overflow-clip rounded-3xl"
+          className="m-2 overflow-clip "
           style={{
             background: mixed,
             height: `${h}px`,
             width: `${w}px`,
+            borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%"
           }}
         >
           <div className="glass">

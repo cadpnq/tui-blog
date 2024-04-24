@@ -1,0 +1,53 @@
+base-case-color = rgb(225, 210, 180)
+case = darken(base-case-color, 10)
+case-corner = darken(case, 15)
+case-shadow = darken(case, 50)
+case-bottom-shadow = darken(case-shadow, 10)
+
+// bezel colors
+dark = rgb(25, 25, 20)
+mid = rgb(55, 55, 50)
+light = rgb(70, 70, 65)
+hilight = rgb(85, 85, 80)
+bezel-shadow = darken(case, 50)
+
+
+.bezel
+  border-color: light
+  background: conic-gradient(
+    dark 0deg 57deg,
+    mid 59deg,
+
+    dark 122deg,
+    hilight 124deg 236deg,
+    dark 238deg,
+
+    mid 301deg,
+  dark 303deg 360deg
+  )
+  box-shadow: 0px 8px 4px 0px bezel-shadow
+
+.case
+  background: case
+  background-image: linear-gradient(
+    transparent 50%,
+    case 90%,
+    case-corner 93%,
+    case-shadow 94%,
+    case-corner 95%,
+    case-corner 98%,
+    case-bottom-shadow 100%
+  ),
+  linear-gradient(
+    90deg,
+    case-corner 0%,
+    transparent 2%,
+    transparent 98%,
+    case-corner 100%
+  ),
+  linear-gradient(
+    case-corner 0%,
+    transparent 2%,
+    transparent 98%,
+    case-corner 100%
+  )
