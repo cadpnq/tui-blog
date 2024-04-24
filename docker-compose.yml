@@ -1,0 +1,27 @@
+
+version: "3"
+
+services:
+  web:
+    container_name: ui
+    build:
+      context: .
+      dockerfile: ./apps/ui/Dockerfile
+    restart: always
+    ports:
+      - 9001:80
+    networks:
+      - app_network
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    restart: always
+    ports:
+      - 9090:80
+    networks:
+      - app_network
+
+networks:
+  app_network:

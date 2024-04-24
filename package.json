@@ -24,7 +24,7 @@
   "homepage": "https://github.com/cadpnq/tui-blog#readme",
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "typescript": "^5.4.5",
-    "turbo": "^1.13.2"
+    "turbo": "^1.13.2",
+    "typescript": "^5.4.5"
   }
 }
