@@ -109,12 +109,12 @@ export const Display = ({
     }
   }, []);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      term.current.write("Hello, World!");
-    }, 300);
-    return () => clearInterval(intervalId);
-  });
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     term.current.write("Hello, World!");
+  //   }, 300);
+  //   return () => clearInterval(intervalId);
+  // });
 
   return (
     <>

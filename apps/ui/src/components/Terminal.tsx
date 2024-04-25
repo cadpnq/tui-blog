@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import { Display } from "./Display";
 import { Knob } from "./Knob";
+// @ts-ignore
 import { Sun, MoveVertical, MoveHorizontal, Focus, Power } from "lucide-preact";
 import "./Terminal.styl";
 
