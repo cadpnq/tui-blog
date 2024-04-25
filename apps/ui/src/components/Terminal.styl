@@ -3,6 +3,8 @@ case = darken(base-case-color, 10)
 case-corner = darken(case, 15)
 case-shadow = darken(case, 50)
 case-bottom-shadow = darken(case-shadow, 10)
+case-icon = darken(case, 35)
+case-icon-shadow = darken(case-icon, 20)
 
 // bezel colors
 dark = rgb(25, 25, 20)
@@ -25,7 +27,7 @@ bezel-shadow = darken(case, 50)
     mid 301deg,
   dark 303deg 360deg
   )
-  box-shadow: 0px 8px 4px 0px bezel-shadow
+  box-shadow: 0px 10px 5px 1px bezel-shadow
 
 .case
   background: case
@@ -33,7 +35,9 @@ bezel-shadow = darken(case, 50)
     transparent 50%,
     case 90%,
     case-corner 93%,
-    case-shadow 94%,
+    case-shadow 93.9%,
+    black 94%,
+    case-shadow 94.1%,
     case-corner 95%,
     case-corner 98%,
     case-bottom-shadow 100%
@@ -51,3 +55,8 @@ bezel-shadow = darken(case, 50)
     transparent 98%,
     case-corner 100%
   )
+
+.icon
+  foreground: base-case-color
+  color: case-icon
+//  filter: drop-shadow(0px 0px 5px case-icon-shadow) drop-shadow(0px -1px 0px case-icon-shadow) drop-shadow(0px 1px 3px case-icon-shadow)

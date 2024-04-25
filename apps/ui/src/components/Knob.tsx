@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import "./Knob.styl";
 
 export const Knob = ({
   min = 0,
@@ -58,39 +59,39 @@ export const Knob = ({
   });
 
   return (
-    <svg
-      width={height}
-      height="25"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onWheel={handleWheel}
-      style={{
-        boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.5)",
-      }}
-    >
-      <defs>
-        <linearGradient id="hgradient">
-          <stop offset="0%" stop-color="#46381d" />
-          <stop offset="50%" stop-color="rgb(225, 210, 180)" />
-          <stop offset="100%" stop-color="#46381d" />
-        </linearGradient>
-        <linearGradient id="vgradient" gradientTransform="rotate(90)">
-          <stop offset="0%" stop-color="black" />
-          <stop offset="10%" stop-color="rgb(225, 210, 180)" />
-          <stop offset="90%" stop-color="rgb(225, 210, 180)" />
-          <stop offset="100%" stop-color="black" />
-        </linearGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#hgradient)" />
-      <rect
-        width="100%"
-        height="100%"
-        fill="url(#vgradient)"
-        style={{ mixBlendMode: "multiply" }}
-      />
-      {lines}
-    </svg>
+    <div className="knob">
+      <svg
+        className="mx-[4px] my-[1px]"
+        width={height}
+        height="25"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onWheel={handleWheel}
+      >
+        <defs>
+          <linearGradient id="hgradient">
+            <stop offset="0%" stop-color="#46381d" />
+            <stop offset="50%" stop-color="rgb(225, 210, 180)" />
+            <stop offset="100%" stop-color="#46381d" />
+          </linearGradient>
+          <linearGradient id="vgradient" gradientTransform="rotate(90)">
+            <stop offset="0%" stop-color="black" />
+            <stop offset="10%" stop-color="rgb(225, 210, 180)" />
+            <stop offset="90%" stop-color="rgb(225, 210, 180)" />
+            <stop offset="100%" stop-color="black" />
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hgradient)" />
+        <rect
+          width="100%"
+          height="100%"
+          fill="url(#vgradient)"
+          style={{ mixBlendMode: "multiply" }}
+        />
+        {lines}
+      </svg>
+    </div>
   );
 };
