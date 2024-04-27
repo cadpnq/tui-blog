@@ -5,6 +5,9 @@
       "path": "packages/components"
     },
     {
+      "path": "packages/tui-components"
+    },
+    {
       "path": "apps/ui"
     },
     {

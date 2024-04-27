@@ -4,6 +4,10 @@ import { Terminal } from "./components/Terminal";
 export function App() {
   const socket = new WebSocket('ws://localhost:3000/term');
   
+  socket.onmessage = (event) => {
+    console.log(event.data);
+  }
+
   return <div className="bg-black flex items-center justify-center min-h-screen">
     <Terminal socket={socket}/>
     </div>

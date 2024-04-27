@@ -13,8 +13,8 @@
 			"DOM.Iterable",
 			"ES2023"
 		],
-    "module":"NodeNext",
-    "moduleResolution": "NodeNext",
+    "module":"esnext",
+    "moduleResolution": "node",
 		"sourceMap": true,
 		"jsx": "react",
 		"isolatedModules": true,

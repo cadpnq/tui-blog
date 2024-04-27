@@ -72,6 +72,7 @@ export const Display = ({
   const term = useRef(
     new Terminal({
       //      fontFamily: "Glass TTY VT220",
+      convertEol: true,
       fontFamily: "vt220",
       rows,
       cols,

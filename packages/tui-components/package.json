@@ -1,0 +1,22 @@
+{
+  "name": "@blog/tui-components",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "private": true,
+  "dependencies": {
+    "ink": "^4.4.1",
+    "ink-big-text": "^2.0.0",
+    "react": "^18.2.0",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/ink": "^2.0.3",
+    "@types/ink-big-text": "^1.2.4",
+    "@types/react": "^18.2.79"
+  }
+}
