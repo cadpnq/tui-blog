@@ -21,4 +21,4 @@ FROM base AS runner
 WORKDIR /app
 
 COPY --from=builder /app .
-CMD ["node", "dist/main.js"]
+CMD ["node", "apps/api/dist/index.js"]

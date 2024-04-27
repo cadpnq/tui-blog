@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "docker:down": "docker compose down --volumes --rmi local",
     "dev": "turbo dev",
     "test": "turbo test",
     "build": "turbo build",
