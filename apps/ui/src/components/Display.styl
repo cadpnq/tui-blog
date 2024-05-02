@@ -19,6 +19,39 @@
   filter: url(#bloom);
 }
 
-.glass {
-  background: radial-gradient(circle, transparent 0%, black 135%);
-}
+.glass
+  z-index: 3
+  background: radial-gradient(circle, red 0%, black 135%);
+
+.cap-color
+  filter: url(#cap-color)
+
+.green
+  filter: url(#green)
+
+.brightness-contrast
+  filter: url(#brightness-contrast)
+
+.intensity-bloom
+  filter: url(#intensity-bloom)
+
+.beam-bloom
+  filter: url(#beam-bloom)
+
+.scan-bloom
+  filter: url(#scan-bloom)
+
+
+.gradient-container
+  // position: relative
+  background: black
+
+  &::before
+    content: ''
+    // position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: radial-gradient(circle, transparent 80%, black 150%)
+    pointer-events: none

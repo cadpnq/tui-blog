@@ -19,6 +19,7 @@ app.ws("/term", function (ws, req) {
     render(<MainPage />, {
       stdin: stream as unknown as NodeJS.ReadStream,
       stdout: stream as unknown as NodeJS.WriteStream,
+      patchConsole: false,
     });
   } catch (error) {
     console.error(error);

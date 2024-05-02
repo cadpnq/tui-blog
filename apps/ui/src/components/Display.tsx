@@ -4,69 +4,69 @@ import { useEffect, useMemo, useRef } from "preact/hooks";
 import "../../../../node_modules/@xterm/xterm/css/xterm.css";
 import "./Display.styl";
 import { generateFisheyeEffectDataUrl } from "../util";
-import { rgb } from "d3-color";
-import { interpolateRgb } from "d3-interpolate";
 import { AttachAddon } from "@xterm/addon-attach";
 
-export interface DisplayTheme {
-  background: string;
-  foreground: string;
-}
-
-export const themes: Record<string, DisplayTheme> = {
-  white: {
-    background: "rgb(43,43,43)",
-    foreground: "white",
-  },
-  green: {
-    background: "rgb(43,43,43)",
-    foreground: "green",
-  },
-  amber: {
-    background: "rgb(43,43,43)",
-    foreground: "orange",
-  },
-  blue: {
-    background: "rgb(43,43,43)",
-    foreground: "blue",
-  },
-};
-
 export interface DisplayProps {
-  theme: keyof typeof themes;
   cols: number;
   rows: number;
-  intensity?: number;
   fontSize?: number;
-  distortion?: number;
   correction?: number;
   scaleX?: number;
   scaleY?: number;
   socket?: WebSocket;
+  brightness: number;
+  contrast: number;
+  focus: number;
+  hue?: number;
 }
 
 export const Display = ({
-  theme,
   rows,
   cols,
-  intensity = 0,
   fontSize = 20,
-  distortion = 0,
   scaleX = 1,
   scaleY = 1,
   socket,
+  correction = 1,
+  brightness,
+  contrast,
+  focus,
+  hue = 0,
 }: DisplayProps) => {
-  const { background, foreground } = themes[theme];
-
-  const bg = rgb(background);
-  const fg = rgb(foreground);
-  const mixed = interpolateRgb(bg, fg)(Math.max(intensity, 0));
+  brightness = Math.min(1, Math.max(-1, brightness));
+  contrast = Math.min(1, Math.max(0, contrast));
 
   const w = cols * 10 + 160;
   const h = rows * 19 + 160;
 
-  const distortionFactor = 75;
-  const correctionFactor = -75 * distortion;
+  const fisheyeBasepoint = 80;
+  const distortionScale = fisheyeBasepoint;
+  const correctionScale = -fisheyeBasepoint * correction;
+
+  // const backgroundBrightnessFactor = 1;
+  // const backgroundBrightness = brightness * backgroundBrightnessFactor;
+  // const backgroundColor = interpolateRgb(
+  //   "black",
+  //   "white"
+  // )(backgroundBrightness);
+
+  // const foregroundBrightnessFactor = 1;
+  // const foregroundContrastFactor = 1;
+  // const foregroundBrightness = Math.max(
+  //   brightness * backgroundBrightnessFactor,
+  //   brightness * foregroundBrightnessFactor +
+  //     foregroundContrastFactor * contrast
+  // );
+  // const foregroundColor = interpolateRgb(
+  //   "black",
+  //   "white"
+  // )(foregroundBrightness + backgroundBrightness);
+
+  const bloomStrength =  10 * Math.abs((Math.abs(brightness) + contrast) - focus);
+
+  console.log(
+    `VALUES:\n\tbrightness: ${brightness}\n\tcontrast: ${contrast}\n\tfocus: ${focus}\n\tcorrection: ${correction}`,
+  );
 
   const termRef = useRef(null);
   const term = useRef(
@@ -80,8 +80,8 @@ export const Display = ({
       allowTransparency: true,
       theme: {
         background: "rgba(0,0,0,0)",
-        foreground,
-        cursor: foreground,
+        foreground: "white",
+        cursor: "white",
       },
     })
   );
@@ -110,42 +110,46 @@ export const Display = ({
     }
   }, []);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     term.current.write("Hello, World!");
-  //   }, 300);
-  //   return () => clearInterval(intervalId);
-  // });
-
   return (
     <>
-      <div className="">
         <div
-          className="m-2 overflow-clip "
+          className=""
           style={{
-            background: mixed,
-            height: `${h}px`,
-            width: `${w}px`,
-            borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%"
+            filter: `hue-rotate(${hue}deg)`,
           }}
         >
-          <div className="glass">
-            <div className="correct">
-              <div className="distort">
-                <div
-                  className="p-20"
-                  style={{
-                    background: "transparent",
-                    transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
-                  }}
-                >
-                  <div className="vt220 bloom" ref={termRef}></div>
+          <div
+            className="m-2 overflow-clip"
+            style={{
+              height: `${h}px`,
+              width: `${w}px`,
+              borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%",
+            }}
+          >
+              <div className="intensity-bloom">
+                <div className="beam-bloom">
+                  <div className="scan-bloom">
+                  <div className="brightness-contrast" style={{ background: "black" }}>
+                    <div className="correct">
+                      <div className="distort">
+                        <div
+                          className="p-20"
+                          style={{
+                            background: "transparent",
+                            transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
+                          }}
+                        >
+                          <div className="vt220" ref={termRef}>
+                            <div className="bg-red-700"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </div></div>
           </div>
-        </div>
-      </div>
       <svg style={{ display: "none" }}>
         <defs>
           <filter
@@ -166,7 +170,7 @@ export const Display = ({
               in="SourceGraphic"
               xChannelSelector="R"
               yChannelSelector="G"
-              scale={distortionFactor}
+              scale={distortionScale}
             />
             <feComposite operator="in" in2="map"></feComposite>
           </filter>
@@ -188,18 +192,62 @@ export const Display = ({
               in="SourceGraphic"
               xChannelSelector="R"
               yChannelSelector="G"
-              scale={correctionFactor}
+              scale={correctionScale}
             />
             <feComposite operator="in" in2="map"></feComposite>
           </filter>
-          <filter id="bloom">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
-            <feComposite
-              in2="SourceGraphic"
-              operator="arithmetic"
-              k2={15 * intensity}
-              k3="1.1"
+          <filter id="scan-bloom">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.1 0" />
+          </filter>
+          <filter id="beam-bloom">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation={`${bloomStrength}`}
             />
+          </filter>
+          <filter id="brightness-contrast">
+            <feComponentTransfer in="SourceGraphic">
+              <feFuncG type="linear" slope={contrast} intercept={brightness} />
+              <feFuncR type="linear" slope={contrast} intercept={brightness} />
+              <feFuncB type="linear" slope={contrast} intercept={brightness} />
+              <feFuncA type="identity" />
+            </feComponentTransfer>
+          </filter>
+          <filter id="intensity-bloom">
+            <feComponentTransfer in="SourceGraphic" result="clipped">
+              <feFuncR type="discrete" tableValues="0 0 0 0 1" />
+              <feFuncG type="discrete" tableValues="0 0 0 0 1" />
+              <feFuncB type="discrete" tableValues="0 0 0 0 1" />
+              <feFuncA type="identity" />
+            </feComponentTransfer>
+            <feColorMatrix type="luminanceToAlpha" result="luminance" />
+            <feComposite
+              in="SourceGraphic"
+              in2="luminance"
+              operator="in"
+              result="composited"
+            />
+            <feGaussianBlur stdDeviation="10" in="composited" result="blur" />
+            <feGaussianBlur stdDeviation="10" in="blur" result="blur2" />
+            <feBlend mode="lighten" in="SourceGraphic" in2="blur2" result="blend" />
+            <feColorMatrix
+              type="saturate"
+              values="0"
+              in="blend"
+              result="monochrome"
+            />
+            <feComponentTransfer
+              x="0%"
+              y="0%"
+              width="100%"
+              height="100%"
+              in="monochrome"
+            >
+              <feFuncR type="gamma" amplitude="0.2" exponent="0.6" offset="0" />
+              <feFuncG type="gamma" amplitude="1" exponent="0.6" offset="0" />
+              <feFuncB type="gamma" amplitude="0.4" exponent="0.6" offset="0" />
+              <feFuncA type="identity" />
+            </feComponentTransfer>
           </filter>
         </defs>
       </svg>
