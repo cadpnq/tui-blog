@@ -1,48 +1,62 @@
-import { useState } from "preact/hooks";
+import { useState, useCallback } from "preact/hooks";
 import "./Knob.styl";
+import { useThrottleCallback } from "../util";
+
+interface KnobProps {
+  min?: number;
+  max?: number;
+  height?: number;
+  sensitivity?: number;
+  onChange: (value: number) => void;
+}
 
 export const Knob = ({
   min = 0,
   max = 1,
   height = 50,
+  sensitivity = 1,
   onChange,
-}: {
-  min?: number;
-  max?: number;
-  height?: number;
-  onChange: (i: number) => void;
-}) => {
+}: KnobProps) => {
   const [offset, setOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleMouseDown = () => {
-    setIsDragging(true);
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-    const deltaX = e.movementX;
-    updateOffset(deltaX);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleWheel = (e: WheelEvent) => {
-    e.preventDefault();
-    const deltaY = e.deltaY;
-    updateOffset(deltaY);
-  };
-
-  const updateOffset = (delta: number) => {
+  const updateOffset = useThrottleCallback((delta: number) => {
     setOffset((prevOffset) => {
       const newOffset = prevOffset + delta;
-      const value = (newOffset / height) * (max - min) + min;
-      onChange(value);
+      let newValue = ((newOffset / height) * (max - min) + min) * sensitivity;
+      newValue = Math.max(min, Math.min(max, newValue));
+      onChange(newValue);
+
+      if (newValue === min || newValue === max) {
+        return prevOffset;
+      }
       return newOffset;
     });
-  };
+  }, 100);
+  
+  const handleMouseDown = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging) return;
+      updateOffset(e.movementX);
+    },
+    [isDragging, updateOffset]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      e.preventDefault();
+      updateOffset(e.deltaY);
+    },
+    [updateOffset]
+  );
 
   const lines = Array.from({ length: 20 }, (_, i) => {
     const x = (i * 10 + offset) % height;

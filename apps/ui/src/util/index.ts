@@ -1,3 +1,4 @@
+import {useEffect, useRef, useState } from "preact/hooks";
 
 export const generateFisheyeEffectDataUrl = (
   width: number,
@@ -42,3 +43,29 @@ export const generateFisheyeEffectDataUrl = (
 
   return canvas.toDataURL();
 };
+
+export const useThrottleCallback = (callback: (...args: any) => void, delay: number) => {
+  const [ready, setReady] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const throttledFunction = (...args: any) => {
+    if (!ready) return;
+
+    callback(...args);
+    setReady(false);
+    timerRef.current = setTimeout(() => {
+      setReady(true);
+    }, delay);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  return throttledFunction;
+}
+
