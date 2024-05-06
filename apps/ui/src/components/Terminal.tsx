@@ -15,10 +15,10 @@ import "./Terminal.styl";
 
 export function Terminal({ socket }: { socket?: WebSocket }) {
   const [correction, setCorrection] = useState(0.1);
-  const [brightness, setBrightness] = useState(-0.013);
-  const [contrast, setContrast] = useState(0.75);
-  const [focus, setFocus] = useState(0.76);
-  const [hue, setHue] = useState(0);
+  const [brightness, setBrightness] = useState(0.01333333333333342);
+  const [contrast, setContrast] = useState(0.7466666666666667);
+  const [focus, setFocus] = useState(0.72);
+  const [hue, setHue] = useState(-90);
   const [scaleX, setScaleX] = useState(1);
   const [scaleY, setScaleY] = useState(1);
 

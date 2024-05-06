@@ -32,7 +32,7 @@ export const Knob = ({
       }
       return newOffset;
     });
-  }, 100);
+  }, 5);
   
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);

@@ -62,10 +62,10 @@ export const Display = ({
   //   "white"
   // )(foregroundBrightness + backgroundBrightness);
 
-  const bloomStrength =  10 * Math.abs((Math.abs(brightness) + contrast) - focus);
+  const bloomStrength = 10 * Math.abs(Math.abs(brightness) + contrast - focus);
 
   console.log(
-    `VALUES:\n\tbrightness: ${brightness}\n\tcontrast: ${contrast}\n\tfocus: ${focus}\n\tcorrection: ${correction}`,
+    `VALUES:\n\tbrightness: ${brightness}\n\tcontrast: ${contrast}\n\tfocus: ${focus}\n\tcorrection: ${correction}`
   );
 
   const termRef = useRef(null);
@@ -104,7 +104,20 @@ export const Display = ({
       }
       const webgl = new WebglAddon();
       term.current.loadAddon(webgl);
+
+      const localEcho = term.current.onData((data) => {
+        if (data.endsWith("\r")) data += "\n";
+
+        if (data === "\b" || data === "\x7f") {
+          console.log("backspace");
+          term.current.write("\b \b");
+        } else {
+          term.current.write(data);
+        }
+      });
+
       return () => {
+        localEcho.dispose();
         webgl.dispose();
       };
     }
@@ -112,45 +125,43 @@ export const Display = ({
 
   return (
     <>
+      <div
+        className=""
+        style={{
+          filter: `hue-rotate(${hue}deg)`,
+        }}
+      >
         <div
-          className=""
+          className="m-2 overflow-clip"
           style={{
-            filter: `hue-rotate(${hue}deg)`,
+            height: `${h}px`,
+            width: `${w}px`,
+            borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%",
           }}
         >
-          <div
-            className="m-2 overflow-clip"
-            style={{
-              height: `${h}px`,
-              width: `${w}px`,
-              borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%",
-            }}
-          >
-              <div className="intensity-bloom">
-                <div className="beam-bloom">
-                  <div className="scan-bloom">
-                  <div className="brightness-contrast" style={{ background: "black" }}>
-                    <div className="correct">
-                      <div className="distort">
-                        <div
-                          className="p-20"
-                          style={{
-                            background: "transparent",
-                            transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
-                          }}
-                        >
-                          <div className="vt220" ref={termRef}>
-                            <div className="bg-red-700"></div>
-                          </div>
-                        </div>
+          <div className="intensity-bloom">
+            <div className="beam-bloom">
+              <div className="scan-bloom">
+                <div className="brightness-contrast" style={{}}>
+                  <div className="correct">
+                    <div className="distort">
+                      <div
+                        className="p-20"
+                        style={{
+                          transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
+                        }}
+                      >
+                        <div className="vt220" ref={termRef}></div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div></div>
+            </div>
           </div>
-      <svg style={{ display: "none" }}>
+        </div>
+      </div>
+      <svg style="position:absolute; height:0">
         <defs>
           <filter
             id="distort"
@@ -229,7 +240,12 @@ export const Display = ({
             />
             <feGaussianBlur stdDeviation="10" in="composited" result="blur" />
             <feGaussianBlur stdDeviation="10" in="blur" result="blur2" />
-            <feBlend mode="lighten" in="SourceGraphic" in2="blur2" result="blend" />
+            <feBlend
+              mode="lighten"
+              in="SourceGraphic"
+              in2="blur2"
+              result="blend"
+            />
             <feColorMatrix
               type="saturate"
               values="0"

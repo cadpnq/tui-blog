@@ -5,12 +5,13 @@ import websocketStream from "websocket-stream";
 import { MainPage } from "@blog/tui-components";
 import { render } from "ink";
 import React from "react";
+import { spawn } from "child_process";
 
 const app = express();
 expressWebSocket(app, undefined, {});
 
 // @ts-ignore
-app.ws("/term", function (ws, req) {
+app.ws("/term", (ws, req) => {
   try {
     console.log("Connected to terminal");
 
@@ -28,6 +29,31 @@ app.ws("/term", function (ws, req) {
   // setInterval(() => {
   // 	stream.write("Hello, World! ");
   // }, 500);
+});
+
+// @ts-ignore
+app.ws('/mud', (ws, req) => {
+  const telnet = spawn('telnet', ['95.217.191.11', '4000']);
+
+  telnet.stdout.on('data', (data) => {
+    ws.send(data.toString());
+  });
+
+  // @ts-ignore
+  ws.on('message', (message) => {
+    telnet.stdin.write(message.toString());
+  });
+
+  telnet.on('exit', () => ws.close());
+
+  telnet.on('error', (error) => {
+    console.error(`Telnet error: ${error.message}`);
+  });
+
+  // @ts-ignore
+  ws.on('error', (error) => {
+    console.error(`WebSocket error: ${error.message}`);
+  });
 });
 
 app.listen(3000);
