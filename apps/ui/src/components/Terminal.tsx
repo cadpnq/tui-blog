@@ -12,15 +12,49 @@ import {
   Blend,
 } from "lucide-preact";
 import "./Terminal.styl";
+import { SerialSocket } from "../util/SerialSocket";
 
-export function Terminal({ socket }: { socket?: WebSocket }) {
+
+/*
+VALUES:
+	brightness: -0.013333333333333308
+	contrast: 0.76
+	focus: 0.7333333333333333
+	correction: 0.6000000000000005
+	scaleX: 1.1066666666666667
+	scaleY: 1.2533333333333334
+	hue: 90
+
+VALUES:
+	brightness: 0.01333333333333342
+	contrast: 0.88
+	focus: 0.8533333333333334
+	correction: 1
+	scaleX: 1.1066666666666667
+	scaleY: 1.2533333333333334
+	hue: 90
+
+
+VALUES:
+	brightness: 0.01333333333333342
+	contrast: 0.72
+	focus: 0.8
+	correction: 0.1
+	scaleX: 1.1066666666666667
+	scaleY: 1.2533333333333334
+	hue: 90
+
+*/
+
+
+export function Terminal({ socket }: { socket?: SerialSocket }) {
   const [correction, setCorrection] = useState(0.1);
   const [brightness, setBrightness] = useState(0.01333333333333342);
-  const [contrast, setContrast] = useState(0.7466666666666667);
-  const [focus, setFocus] = useState(0.72);
-  const [hue, setHue] = useState(-90);
-  const [scaleX, setScaleX] = useState(1);
-  const [scaleY, setScaleY] = useState(1);
+  const [contrast, setContrast] = useState(0.72);
+  const [focus, setFocus] = useState(0.8);
+  const [hue, setHue] = useState(90);
+  const [scaleX, setScaleX] = useState(1.1066666666666667);
+  const [scaleY, setScaleY] = useState(1.2533333333333334);
 
   return (
     <>

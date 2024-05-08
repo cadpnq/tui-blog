@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef } from "preact/hooks";
 import "../../../../node_modules/@xterm/xterm/css/xterm.css";
 import "./Display.styl";
 import { generateFisheyeEffectDataUrl } from "../util";
-import { AttachAddon } from "@xterm/addon-attach";
+// import { AttachAddon } from "@xterm/addon-attach";
+import { SerialSocket } from "../util/SerialSocket";
 
 export interface DisplayProps {
   cols: number;
@@ -13,7 +14,7 @@ export interface DisplayProps {
   correction?: number;
   scaleX?: number;
   scaleY?: number;
-  socket?: WebSocket;
+  socket?: SerialSocket;
   brightness: number;
   contrast: number;
   focus: number;
@@ -43,29 +44,10 @@ export const Display = ({
   const distortionScale = fisheyeBasepoint;
   const correctionScale = -fisheyeBasepoint * correction;
 
-  // const backgroundBrightnessFactor = 1;
-  // const backgroundBrightness = brightness * backgroundBrightnessFactor;
-  // const backgroundColor = interpolateRgb(
-  //   "black",
-  //   "white"
-  // )(backgroundBrightness);
-
-  // const foregroundBrightnessFactor = 1;
-  // const foregroundContrastFactor = 1;
-  // const foregroundBrightness = Math.max(
-  //   brightness * backgroundBrightnessFactor,
-  //   brightness * foregroundBrightnessFactor +
-  //     foregroundContrastFactor * contrast
-  // );
-  // const foregroundColor = interpolateRgb(
-  //   "black",
-  //   "white"
-  // )(foregroundBrightness + backgroundBrightness);
-
   const bloomStrength = 10 * Math.abs(Math.abs(brightness) + contrast - focus);
 
   console.log(
-    `VALUES:\n\tbrightness: ${brightness}\n\tcontrast: ${contrast}\n\tfocus: ${focus}\n\tcorrection: ${correction}`
+    `VALUES:\n\tbrightness: ${brightness}\n\tcontrast: ${contrast}\n\tfocus: ${focus}\n\tcorrection: ${correction}\n\tscaleX: ${scaleX}\n\tscaleY: ${scaleY}\n\thue: ${hue}`
   );
 
   const termRef = useRef(null);
@@ -78,6 +60,7 @@ export const Display = ({
       cols,
       fontSize,
       allowTransparency: true,
+      cursorBlink: true,
       theme: {
         background: "rgba(0,0,0,0)",
         foreground: "white",
@@ -86,7 +69,7 @@ export const Display = ({
     })
   );
   const distortionMap = useMemo(() => {
-    return generateFisheyeEffectDataUrl(w, h, 128);
+    return generateFisheyeEffectDataUrl(w, h, 64);
   }, []);
 
   useEffect(() => {
@@ -96,41 +79,46 @@ export const Display = ({
         term.current.options.fontSize = 0;
         term.current.options.fontSize = fontSize;
       });
-      if (socket) {
-        socket.onopen = () => {
-          const attach = new AttachAddon(socket);
-          term.current.loadAddon(attach);
-        };
-      }
+      
       const webgl = new WebglAddon();
       term.current.loadAddon(webgl);
+      term.current.focus();
 
+      // :(
       const localEcho = term.current.onData((data) => {
-        if (data.endsWith("\r")) data += "\n";
-
+        let localData = data;
+        if (data.endsWith("\r")) {
+          localData += "\n";
+        }
         if (data === "\b" || data === "\x7f") {
-          console.log("backspace");
-          term.current.write("\b \b");
-        } else {
-          term.current.write(data);
+          localData = "\b \b";
+        }
+        term.current.write(localData);
+
+        if (socket) {
+          socket.send(data);
         }
       });
+
+      if (socket) {
+        socket.onData = (data) => {
+          term.current.write(data);
+        };
+      }
 
       return () => {
         localEcho.dispose();
         webgl.dispose();
+        if (socket) {
+          socket.close();
+        }
       };
     }
-  }, []);
+  }, [fontSize, socket]);
 
   return (
     <>
-      <div
-        className=""
-        style={{
-          filter: `hue-rotate(${hue}deg)`,
-        }}
-      >
+      <div className="glass">
         <div
           className="m-2 overflow-clip"
           style={{
@@ -139,19 +127,33 @@ export const Display = ({
             borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%",
           }}
         >
-          <div className="intensity-bloom">
-            <div className="beam-bloom">
-              <div className="scan-bloom">
-                <div className="brightness-contrast" style={{}}>
-                  <div className="correct">
-                    <div className="distort">
-                      <div
-                        className="p-20"
-                        style={{
-                          transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
-                        }}
-                      >
-                        <div className="vt220" ref={termRef}></div>
+          <div
+            className="front"
+            style={{
+              width: `${w}px`,
+              borderRadius: "50% 50% 50% 50% / 1% 1% 1% 1%",
+            }}
+          ></div>
+          <div
+            className=""
+            style={{
+              filter: `hue-rotate(${hue}deg)`,
+            }}
+          >
+            <div className="intensity-bloom">
+              <div className="beam-bloom">
+                <div className="scan-bloom">
+                  <div className="brightness-contrast" style={{}}>
+                    <div className="correct">
+                      <div className="distort">
+                        <div
+                          className="p-20"
+                          style={{
+                            transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
+                          }}
+                        >
+                          <div className="vt220" ref={termRef}></div>
+                        </div>
                       </div>
                     </div>
                   </div>

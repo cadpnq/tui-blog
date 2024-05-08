@@ -13,8 +13,18 @@
   filter: url(#correct);
 
 .glass
-  z-index: 3
-  background: radial-gradient(circle, red 0%, black 135%);
+  position: relative;
+  .front
+    content: ''
+    z-index: 1
+    height: 100%
+    display: block
+    position: absolute
+    pointer-events: none
+    top: 0
+    left: 8px
+    background: radial-gradient(circle, rgba(200,200,200,0.2) 0%, transparent 85%, black 110%)
+
 
 .brightness-contrast
   background: black
