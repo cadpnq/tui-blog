@@ -1,4 +1,4 @@
-import { h, FunctionComponent } from "preact";
+import { FunctionComponent } from "preact";
 import "./Menu.styl";
 import { useSettings } from "../util/Settings";
 import { useState } from "preact/hooks";

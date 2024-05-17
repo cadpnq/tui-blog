@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { Display } from "./Display";
 import { Knob } from "./Knob";
 // @ts-ignore
@@ -15,7 +15,6 @@ import "./Terminal.styl";
 import { SerialSocket } from "../util/SerialSocket";
 import { LED } from "./LED";
 import { useSettings } from "../util/Settings";
-import { useEffect } from "react";
 import { SideMenu } from "./Menu";
 
 /*

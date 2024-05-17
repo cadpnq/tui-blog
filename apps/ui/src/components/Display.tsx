@@ -73,7 +73,7 @@ export const Display = ({
     return generateFisheyeEffectDataUrl(w, h, 64);
   }, []);
 
-  const { settings: {blinkLights, distortScreen, bloomEffect} } = useSettings();
+  const { settings: {distortScreen, bloomEffect} } = useSettings();
 
   useEffect(() => {
     console.log('running here');
