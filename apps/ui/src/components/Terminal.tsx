@@ -194,7 +194,7 @@ export function Terminal({ socket }: { socket?: SerialSocket }) {
           </div>
         </div>
       </div>
-      <svg style={{ display: "none" }}>
+      <svg style="position:absolute; height:0">
         <defs>
           <filter id="noise">
             <feTurbulence
