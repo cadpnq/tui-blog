@@ -13,7 +13,10 @@ import {
 } from "lucide-preact";
 import "./Terminal.styl";
 import { SerialSocket } from "../util/SerialSocket";
-
+import { LED } from "./LED";
+import { useSettings } from "../util/Settings";
+import { useEffect } from "react";
+import { SideMenu } from "./Menu";
 
 /*
 VALUES:
@@ -46,7 +49,6 @@ VALUES:
 
 */
 
-
 export function Terminal({ socket }: { socket?: SerialSocket }) {
   const [correction, setCorrection] = useState(0.1);
   const [brightness, setBrightness] = useState(0.01333333333333342);
@@ -56,8 +58,47 @@ export function Terminal({ socket }: { socket?: SerialSocket }) {
   const [scaleX, setScaleX] = useState(1.1066666666666667);
   const [scaleY, setScaleY] = useState(1.2533333333333334);
 
+  const [tx, setTx] = useState<boolean>(false);
+  const [rx, setRx] = useState<boolean>(false);
+
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    if (socket) {
+      if (settings.blinkLights) {
+        socket.onTransmitStart = () => {
+          console.log("transmit start");
+          setTx(true);
+        };
+
+        socket.onTransmitEnd = () => {
+          console.log("transmit end");
+          setTx(false);
+        };
+
+        socket.onReceiveStart = () => {
+          console.log("receive start");
+          setRx(true);
+        };
+
+        socket.onReceiveEnd = () => {
+          console.log("receive end");
+          setRx(false);
+        };
+      } else {
+        socket.onTransmitStart = () => {};
+        socket.onTransmitEnd = () => {};
+        socket.onReceiveStart = () => {};
+        socket.onReceiveEnd = () => {};
+        setTx(false);
+        setRx(false);
+      }
+    }
+  }, [socket, settings.blinkLights]);
+
   return (
     <>
+      <SideMenu />
       <div className="case pb-4 px-10 rounded-lg">
         <div className="bezel flex flex-col p-4 mt-[-20px] mb-4 rounded-lg border-opacity-100 border-[20px] z-10">
           <div className="">
@@ -102,7 +143,25 @@ export function Terminal({ socket }: { socket?: SerialSocket }) {
           </div>
           <div className="px-3 flex flex-col items-center">
             <Blend size={25} className="icon mb-1" />
-            <Knob height={75} onChange={setHue} min={-90} max={90}/>
+            <Knob height={75} onChange={setHue} min={-90} max={90} />
+          </div>
+          <div className="pl-3 pr-1 flex flex-col items-center justify-center">
+            <span>RX</span>
+            <LED shape="round" on={rx} />
+            {/* {rx ? (
+              <div className="w-5 h-5 rounded-full bg-green-500"></div>
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-red-500"></div>
+            )} */}
+          </div>
+          <div className="px-1 flex flex-col items-center justify-center">
+            <span>TX</span>
+            <LED shape="round" on={tx} />
+            {/* {tx ? (
+              <div className="w-5 h-5 rounded-full bg-green-500"></div>
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-red-500"></div>
+            )} */}
           </div>
           <div className="flex flex-grow"></div>
           <div className="flex flex-col-reverse">

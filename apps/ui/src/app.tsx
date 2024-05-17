@@ -1,17 +1,21 @@
 import "./index.css";
 import { Terminal } from "./components/Terminal";
 import { SerialSocket } from "./util/SerialSocket";
+import { SettingsProvider } from "./util/Settings";
 
 export function App() {
   // const socket = new WebSocket('ws://localhost:3000/mud');
 
-  const slowsocket = new SerialSocket({url: 'ws://localhost:3000/mud', baudRate: 1200});
-  
-  // socket.onmessage = (event) => {
-  //   console.log(event.data.toString('hex'));
-  // }
+  const slowsocket = new SerialSocket({
+    url: "ws://localhost:3000/mud",
+    baudRate: 19200,
+  });
 
-  return <div className="bg-black flex items-center justify-center min-h-screen">
-    <Terminal socket={slowsocket}/>
-    </div>
+  return (
+    <SettingsProvider>
+      <div className="bg-black flex items-center justify-center min-h-screen">
+        <Terminal socket={slowsocket} />
+      </div>
+    </SettingsProvider>
+  );
 }

@@ -19,40 +19,58 @@ export class SerialSocket {
 
   handleTransmit() {
     if (this.sendBuffer.length === 0) {
+      if (this.transmitting) {
+        this.onTransmitEnd();
+      }
       this.transmitting = false;
       return;
+    }
+    if (!this.transmitting) {
+      this.onTransmitStart();
     }
     this.transmitting = true;
     const data = this.sendBuffer.shift();
     if (!data) {
+      if (this.transmitting) {
+        this.onTransmitEnd();
+      }
       this.transmitting = false;
       return;
     }
-    console.log(`doodle tx light`)
+    // this.onTransmit();
     this.stream.send(data);
 
     setTimeout(() => {
       this.handleTransmit();
-    }, 1000 / this.baudRate / 8);
+    }, 1000 / (this.baudRate / 8));
   }
 
   handleReceive() {
     if (this.receiveBuffer.length === 0) {
+      if (this.receiving) {
+        this.onReceiveEnd();
+      }
       this.receiving = false;
       return;
+    }
+    if (!this.receiving) {
+      this.onReceiveStart();
     }
     this.receiving = true;
     const data = this.receiveBuffer.shift();
     if (!data) {
+      if (this.receiving) {
+        this.onReceiveEnd();
+      }
       this.receiving = false;
       return;
     }
-    console.log('diddle rx light');
+    // this.onReceive();
     this.onData(data);
 
     setTimeout(() => {
       this.handleReceive();
-    }, 1000 / this.baudRate / 8);
+    }, 1000 / (this.baudRate / 8));
   }
 
   send(data: string) {
@@ -64,6 +82,13 @@ export class SerialSocket {
 
   // @ts-ignore
   onData(data: string) {}
+  onTransmit() {}
+  onReceive() {}
+
+  onTransmitStart() {}
+  onTransmitEnd() {}
+  onReceiveStart() {}
+  onReceiveEnd() {}
 
   close() {
     this.stream.close();

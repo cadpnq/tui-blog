@@ -6,6 +6,7 @@ import "./Display.styl";
 import { generateFisheyeEffectDataUrl } from "../util";
 // import { AttachAddon } from "@xterm/addon-attach";
 import { SerialSocket } from "../util/SerialSocket";
+import { useSettings } from "../util/Settings";
 
 export interface DisplayProps {
   cols: number;
@@ -72,14 +73,17 @@ export const Display = ({
     return generateFisheyeEffectDataUrl(w, h, 64);
   }, []);
 
+  const { settings: {blinkLights, distortScreen, bloomEffect} } = useSettings();
+
   useEffect(() => {
+    console.log('running here');
     if (termRef.current) {
       term.current.open(termRef.current);
       document.fonts.ready.then(() => {
         term.current.options.fontSize = 0;
         term.current.options.fontSize = fontSize;
       });
-      
+
       const webgl = new WebglAddon();
       term.current.loadAddon(webgl);
       term.current.focus();
@@ -140,19 +144,21 @@ export const Display = ({
               filter: `hue-rotate(${hue}deg)`,
             }}
           >
-            <div className="intensity-bloom">
-              <div className="beam-bloom">
-                <div className="scan-bloom">
-                  <div className="brightness-contrast" style={{}}>
-                    <div className="correct">
-                      <div className="distort">
-                        <div
-                          className="p-20"
-                          style={{
-                            transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
-                          }}
-                        >
-                          <div className="vt220" ref={termRef}></div>
+            <div className="tint">
+              <div className={bloomEffect ? "intensity-bloom" : ""}>
+                <div className={bloomEffect ? "beam-bloom" : ""}>
+                  <div className={bloomEffect ? "scan-bloom" : ""}>
+                    <div className="brightness-contrast">
+                      <div className={distortScreen ? "correct" : ""}>
+                        <div className={distortScreen ? "distort" : ""}>
+                          <div
+                            className="p-20"
+                            style={{
+                              transform: `scaleY(${scaleY}) scaleX(${scaleX})`,
+                            }}
+                          >
+                            <div className="vt220" ref={termRef}></div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -252,14 +258,15 @@ export const Display = ({
               type="saturate"
               values="0"
               in="blend"
-              result="monochrome"
             />
+          </filter>
+          <filter id="tint">
             <feComponentTransfer
               x="0%"
               y="0%"
               width="100%"
               height="100%"
-              in="monochrome"
+              in="SourceGraphic"
             >
               <feFuncR type="gamma" amplitude="0.2" exponent="0.6" offset="0" />
               <feFuncG type="gamma" amplitude="1" exponent="0.6" offset="0" />
