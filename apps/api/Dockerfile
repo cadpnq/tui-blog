@@ -1,6 +1,6 @@
 FROM node:21-alpine3.18 AS base
 RUN apk add --no-cache libc6-compat
-RUN apk add --no-cache telnet
+RUN apk add --no-cache busybox-extras
 RUN apk update 
 
 FROM base AS pruner
